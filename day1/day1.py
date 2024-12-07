@@ -6,6 +6,7 @@ from aoclib import Input
 if __name__ == '__main__':
     #lines = Input('input_test.txt').lines()
     lines = Input('input.txt').lines()
+    print(lines)
 
     left = sorted([int(n.split()[0].strip()) for n in lines])
     right = sorted([int(n.split()[1].strip()) for n in lines])
