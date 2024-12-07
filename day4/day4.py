@@ -47,6 +47,19 @@ def search(word: str, depth: int, x, y: int, dir: str, field: list[list[str]]) -
     return search(word, depth+1, x, y, dir, field)
 
 
+def search_x_mas(x, y: int, field: list[list[str]]) -> bool:
+    if y == 0 or y == len(field)-1:
+        return False
+    elif x == 0 or x == len(field[0])-1:
+        return False
+    elif field[y][x] != 'A':
+        return False
+
+    one = (field[y-1][x-1] == 'M' and field[y+1][x+1] == 'S') or (field[y-1][x-1] == 'S' and field[y+1][x+1] == 'M') 
+    two = (field[y+1][x-1] == 'M' and field[y-1][x+1] == 'S') or (field[y+1][x-1] == 'S' and field[y-1][x+1] == 'M') 
+
+    return one and two
+
 def solve1(word, field) -> int:
     count = 0
     for y in range(len(field)):
@@ -57,6 +70,16 @@ def solve1(word, field) -> int:
                     count +=1
     return count
 
+def solve2(field) -> int:
+    count = 0
+    for y in range(len(field)):
+        for x in range(len(field[0])):
+            found = search_x_mas(x, y, field)
+            if found:
+                count += 1
+    return count
+            
+
 
 if __name__ == '__main__':
     #field = Input('input_test.txt').lines_as_lists()
@@ -66,4 +89,4 @@ if __name__ == '__main__':
     print('part 1:', solve1('XMAS', field))
 
     #part 2
-    #print('part 2:', solve2(raw))
+    print('part 2:', solve2(field))
