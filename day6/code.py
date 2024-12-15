@@ -137,7 +137,10 @@ class Lab(object):
 
         cls()
         print(self)
-        while self.next():
+        while True:
+            ok, cyccled = self.next()
+            if not ok:
+                break                
             cls()
             print(self)
             print(self.cycles)

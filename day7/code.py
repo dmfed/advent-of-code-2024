@@ -23,7 +23,6 @@ def _concat2(l: list[int]) -> list[int]:
 def may_be_true(val: int, lst: list[int], funcs) -> bool:
     if len(lst) == 1:
         return lst[0] == val
-
     return any([may_be_true(val, f(lst), funcs) for f in funcs])
 
 def solve1(eqs):
