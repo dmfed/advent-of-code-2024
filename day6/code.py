@@ -35,6 +35,9 @@ class Guard(object):
 
     def next(self):
         self.x, self.y = self.want()
+
+    def copy(self):
+        return Guard(self.x, self.y, self.d)
         
     def __str__(self):
         return self.d
@@ -50,37 +53,76 @@ class Map(list):
     def out_of_bounds(self, x, y):
         return (x < 0 or y < 0) or (x >= len(self[0]) or y >= len(self))
 
+    def copy(self):
+        return Map([l.copy() for l in self])
+
 
 class Lab(object):
     def __init__(self, m: Map, g: Guard):
-        self.m = m
-        self.g = g
+        self.m = m.copy()
+        self.g = g.copy()
         self.visited = set()
+        self.cycles = set()
+        self.g_init = g
+        self.m_init = m
         self.print_visited = False
-        self.g_init = Guard(g.x, g.y, g.d)
 
-    def next(self) -> bool:
+    def next(self) -> (bool, bool):
         self.visited.add(self.g.curr())
 
         x, y = self.g.want()
         if self.m.out_of_bounds(x, y):
-            return False
+            return False, False
+
         elif self.m.has_obstacle(x, y):
+            _x, _y = self.g.curr()
+            t = (self.g.d, _x, _y)
+            if t in self.cycles:
+                # approached same obstacle
+                # from same direction
+                return False, True
+            
+            self.cycles.add(t)
             self.g.turn()
-            return True
+            return True, False
 
         self.g.next()
-        return True
+        return True, False
 
-    def reset(self):
+    def _reset(self):
         self.visited = set()
-        self.g = Guard(self.g_init.x, self.g_init.y, self.g_init.d)
+        self.cycles = set()
+        self.g = self.g_init.copy()
+        self.m = self.m_init.copy()
         
 
-    def solve_part1(self):
-        while self.next():
-            pass
+    def solve_part1(self) -> int:
+        self._reset()
+        while True:
+            ok, _ = self.next()
+            if not ok:
+                break
         return len(self.visited)
+
+    def solve_part2(self) -> int:
+        self.solve_part1() # just filling visited 
+        visited = self.visited.copy()
+        cycle_count = 0
+        for t in visited:
+            if self._try_cycle(t):
+                cycle_count += 1
+        return cycle_count
+
+    def _try_cycle(self, t: tuple[int]) -> bool:
+        self._reset()
+        x, y = t
+        self.m[y][x] = '#'
+        while True:
+            ok, cycled = self.next()
+            if cycled:
+                return True
+            if not ok:
+                return False
 
     def animate(self, visited=False):
         '''
@@ -98,6 +140,7 @@ class Lab(object):
         while self.next():
             cls()
             print(self)
+            print(self.cycles)
             sleep(0.5)
 
     def __str__(self):
@@ -122,17 +165,16 @@ def parse_input(lst) -> (Lab):
                  
 
 if __name__ == '__main__':
-    lines = Input('input_test.txt').lines_as_lists()
-    #lines = Input('input.txt').lines_as_lists()
+    #lines = Input('input_test.txt').lines_as_lists()
+    lines = Input('input.txt').lines_as_lists()
 
     lab = parse_input(lines)
 
     #lab.animate(True)
-    lab.animate()
-    lab.reset()
+    #lab.animate()
 
     #part 1
     print('part 1:', lab.solve_part1())
 
     #part 2
-    print('part 2:', '')
+    print('part 2:', lab.solve_part2())
