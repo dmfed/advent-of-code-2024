@@ -11,23 +11,33 @@ def parse_input(lines: list):
         equations.append(eq)    
     return equations
 
-def solve1(eqs):
-    return sum([e[0] if may_be_true(e[0], e[1]) else 0 for e in eqs]) 
+def _sum2(l: list[int]) -> list[int]:
+    return [l[0] + l[1], *l[2:]]
 
-def may_be_true(val: int, lst: list[int]) -> bool:
+def _mul2(l: list[int]) -> list[int]:
+    return [l[0] * l[1], *l[2:]]
+
+def _concat2(l: list[int]) -> list[int]:
+    return [int(str(l[0]) + str(l[1])), *l[2:]]
+
+def may_be_true(val: int, lst: list[int], funcs) -> bool:
     if len(lst) == 1:
         return lst[0] == val
 
-    if may_be_true(val, [lst[0]+lst[1], *lst[2:]]):
-        return True
-    elif may_be_true(val, [lst[0] * lst[1], *lst[2:]]):
-        return True
+    return any([may_be_true(val, f(lst), funcs) for f in funcs])
 
-    return False
-        
+def solve1(eqs):
+    funcs = [_sum2, _mul2]
+    return sum([e[0] if may_be_true(e[0], e[1], funcs) else 0 for e in eqs]) 
+
+def solve2(eqs):
+    funcs = [_sum2, _mul2, _concat2]
+    return sum([e[0] if may_be_true(e[0], e[1], funcs) else 0 for e in eqs]) 
+    
+
 if __name__ == '__main__':
-    lines = Input('input_test.txt').lines()
-    #lines = Input('input.txt').lines()
+    #lines = Input('input_test.txt').lines()
+    lines = Input('input.txt').lines()
 
     eq = parse_input(lines)
 
@@ -35,4 +45,4 @@ if __name__ == '__main__':
     print('part 1:', solve1(eq))
 
     #part 2
-    print('part 2:', '')
+    print('part 2:', solve2(eq))

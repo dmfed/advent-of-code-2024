@@ -47,4 +47,6 @@ Adding up all six test values (the three that could be made before using only + 
 
 Using your new knowledge of elephant hiding spots, determine which equations could possibly be true. What is their total calibration result?
 
+Your puzzle answer was 227921760109726.
 
+Both parts of this puzzle are complete! They provide two gold stars: **
