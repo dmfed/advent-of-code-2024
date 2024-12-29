@@ -15,3 +15,6 @@ class Input(object):
     def lines_as_lists(self):
         return [list(l) for l in self.lines()]
 
+    def lines_split_as_ints(self):
+        return [[int(n) for n in list(l)] for l in self.lines()]
+
