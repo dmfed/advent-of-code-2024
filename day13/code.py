@@ -61,6 +61,7 @@ def parse_input(lines: list[str]) -> list[Machine]:
     return lst
 
 def _solve1(m: Machine) -> int:
+    # why not brute-force? :)
     max_a = min(m.prize.x // m.a.x, m.prize.y // m.a.y)+1
     max_b = min(m.prize.x // m.b.x, m.prize.y // m.b.y)+1
 
@@ -76,6 +77,19 @@ def _solve1(m: Machine) -> int:
 
     return min(costs)
     
+    
+def _solve2(m: Machine) -> int:
+    cost = None
+    times_b = (m.prize.y * m.a.x - m.prize.x * m.a.y) / (m.b.y * m.a.x - m.b.x * m.a.y)
+    times_a = (m.prize.x - m.b.x * times_b) / m.a.x
+
+    #if 100 >= times_a >= 0 and 100 >= times_b >= 0 and times_a.is_integer() and times_b.is_integer():
+    if times_a.is_integer() and times_b.is_integer():
+        cost = int(times_a) * 3 + int(times_b)
+
+    return cost
+
+
 
 def solve1(lines: list[str]):
     machines = parse_input(lines)
@@ -94,11 +108,10 @@ def solve2(lines: list[str]):
     machines = parse_input(lines)
 
     cost = 0
-    for m in machines[:1]:
-        continue
+    for m in machines:
         m.prize.x += 10000000000000
         m.prize.y += 10000000000000
-        c = _solve1(m)
+        c = _solve2(m)
         if not c:
             continue
         cost += c
@@ -114,4 +127,4 @@ if __name__ == '__main__':
     print('part 1:', solve1(lines)) # 27157
 
     #part 2
-    print('part 2:', solve2(lines)) # 862486
+    print('part 2:', solve2(lines)) # 104015411578548
