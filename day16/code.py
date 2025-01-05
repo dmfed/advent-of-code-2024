@@ -43,7 +43,7 @@ class Maze:
 
 def search(m: Maze) -> int:
     x, y = m.start()
-    state = (x, y, 1, 0)
+    state = (x, y, 1, 0) # x diff is 1 (we are facing right), y diff is 0
 
     queue = []
     visited = set()
@@ -75,6 +75,7 @@ def search(m: Maze) -> int:
             
             visited.add(state)
             heapq.heappush(queue, (cost, state))
+
     return -1
        
 def solve1(lines: list[list[str]]):
